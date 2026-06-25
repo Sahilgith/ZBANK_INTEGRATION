@@ -1,0 +1,45 @@
+        managed implementation in class zbp_i_bank_int unique;
+        strict ( 2 );
+
+        define behavior for ZI_BANK_INT
+        //persistent table zdb_bank_int
+        with unmanaged save
+        lock master
+        authorization master ( global )
+        {
+          //  create ( authorization : global );
+          create;
+          update;
+          //  delete;
+
+          field ( readonly ) CompanyCode,
+          AccountingDocument,
+          Ledger,
+          FiscalYear;
+
+          //  field ( mandatory ) utr_id;
+          action ( features : instance ) post result [1] $self;
+          action ( features : instance ) fetchUtr result [1] $self;
+          action ( features : instance ) fetchBalance result [1] $self;
+          action ( features : instance ) fetchStatement result [1] $self;
+          action DownloadStatement result [1] ZI_DOWNLOAD_FILE;
+
+          mapping for zdb_bank_int
+            {
+              CompanyCode        = company_code;
+              AccountingDocument = accounting_document;
+              Ledger             = ledger;
+              FiscalYear         = fiscal_year;
+              utr_id             = utr_id;
+              balance_amt        = balance_amt;
+              currency           = currency;
+              account_no         = account_no;
+              message            = message;
+              created_by         = created_by;
+              created_on         = created_on;
+              local_created_at   = local_created_at;
+              StmtAttachment     = stmt_attachment;
+              StmtFilename       = stmt_filename;
+              StmtMimetype       = stmt_mimetype;
+            }
+        }

@@ -1,0 +1,285 @@
+@Metadata.layer: #CORE
+@UI:{
+    headerInfo:{
+        typeName:       'Bank integration',
+        typeNamePlural: 'Bank integration'
+    },
+    presentationVariant: [{
+        sortOrder: [{ by: 'PostingDate', direction: #DESC }]
+    }]
+}
+
+annotate entity ZC_BANK_INT with
+{
+
+  @UI.facet: [
+    {
+      id:       'Header',
+      purpose:  #STANDARD,
+      type:     #IDENTIFICATION_REFERENCE,
+      label:    'Bank Payment Journal',
+      position: 10
+    }
+  ]
+
+//  @UI: {
+//        lineItem:       [{ position: 10 },
+//                         { type: #FOR_ACTION , dataAction: 'POST', label: 'Post to bank'}],
+//
+//        identification: [{ position: 10 },
+//                         { type: #FOR_ACTION , dataAction: 'POST', label: 'Post to bank'}],
+//
+//        selectionField: [{ position: 10 }]
+//      }
+//  CompanyCode;
+//@UI: {
+//      lineItem:       [{ position: 10 },
+//                       { type: #FOR_ACTION , dataAction: 'POST',         label: 'Post to bank'},
+//                       { type: #FOR_ACTION , dataAction: 'fetchUtr',     label: 'Fetch UTR'},
+//                       { type: #FOR_ACTION , dataAction: 'fetchBalance', label: 'Bank Balance'}],
+//
+//      identification: [{ position: 10 },
+//                       { type: #FOR_ACTION , dataAction: 'POST',         label: 'Post to bank'},
+//                       { type: #FOR_ACTION , dataAction: 'fetchUtr',     label: 'Fetch UTR'},
+//                       { type: #FOR_ACTION , dataAction: 'fetchBalance', label: 'Bank Balance'}],
+//
+//      selectionField: [{ position: 10 }]
+//    }
+
+@UI: {
+  lineItem: [
+    { position: 10 },
+    { type: #FOR_ACTION, dataAction: 'POST',           label: 'Post to bank'       },
+    { type: #FOR_ACTION, dataAction: 'fetchUtr',       label: 'Fetch UTR'          },
+    { type: #FOR_ACTION, dataAction: 'fetchBalance',   label: 'Bank Balance'       },
+    { type: #FOR_ACTION, dataAction: 'fetchStatement', label: 'Account Statement'  } 
+//    { type: #FOR_ACTION, dataAction: 'DownloadStatement', label: 'Download Excel' }
+  ],
+  identification: [
+    { position: 10 },
+    { type: #FOR_ACTION, dataAction: 'POST',           label: 'Post to bank'       },
+    { type: #FOR_ACTION, dataAction: 'fetchUtr',       label: 'Fetch UTR'          },
+    { type: #FOR_ACTION, dataAction: 'fetchBalance',   label: 'Bank Balance'       },
+    { type: #FOR_ACTION, dataAction: 'fetchStatement', label: 'Account Statement'  }  
+//     { type: #FOR_ACTION, dataAction: 'DownloadStatement', label: 'Download Excel' }
+  ],
+  selectionField: [{ position: 10 }]
+}
+CompanyCode;
+  //  CompanyCode;
+  
+   @EndUserText.label: 'Transaction Key'
+  @UI: { lineItem:       [{ position: 15 }],
+         identification: [{ position: 15 }],
+         selectionField: [{ position: 15 }] }
+  TransactionKey;
+  
+
+  @UI: { lineItem:       [{ position: 20 }],
+         identification: [{ position: 20 }],
+         selectionField: [{ position: 20 }] }
+  AccountingDocument;
+
+//  @UI: { lineItem:       [{ position: 30 }],
+//         identification: [{ position: 30 }],
+//         selectionField: [{ position: 30 }] }
+    @UI.hidden: true
+  Ledger;
+  
+  @EndUserText.label: 'URN'
+    @UI: { lineItem:       [{ position: 35 }],
+         identification: [{ position: 35 }],
+         selectionField: [{ position: 35 }] }
+    Urn;
+
+  @UI: { lineItem:       [{ position: 40 }],
+         identification: [{ position: 40 }],
+         selectionField: [{ position: 40 }] }
+  FiscalYear;
+
+  @UI: { lineItem:       [{ position: 50 }],
+         identification: [{ position: 50 }],
+         selectionField: [{ position: 50 }] }
+  DocumentReferenceID;
+
+  @UI: { lineItem:       [{ position: 60 }],
+         identification: [{ position: 60 }],
+         selectionField: [{ position: 60 }] }
+  FiscalPeriod;
+
+  @UI: { lineItem:       [{ position: 70 }],
+         identification: [{ position: 70 }],
+         selectionField: [{ position: 70 }] }
+  PostingDate;
+
+//  @UI: { lineItem:       [{ position: 80 }],
+//         identification: [{ position: 80 }] }
+    @UI.hidden: true
+  CreationDate;
+
+  @UI: { lineItem:       [{ position: 90 }],
+         identification: [{ position: 90 }],
+         selectionField: [{ position: 90 }] }
+  AccountingDocumentType;
+
+  @UI: { lineItem:       [{ position: 100 }],
+         identification: [{ position: 100 }] }
+  AccountingDocCreatedByUser;
+
+  @UI: { lineItem:       [{ position: 360 }],
+         identification: [{ position: 360 }] }
+  AssignmentReference;
+
+  @UI.hidden: true
+  BalanceTransactionCurrency;
+
+
+ @EndUserText.label: 'Credit Amt in Bal Trans Crcy'
+  @UI: { lineItem:       [{ position: 120 }],
+         identification: [{ position: 120 }] }
+  CreditAmountInBalanceTransCrcy;
+
+//  @UI: { lineItem:       [{ position: 130 }],
+//         identification: [{ position: 130 }] }
+ @UI.hidden: true
+  DebitAmountInBalanceTransCrcy;
+
+  @UI: { lineItem:       [{ position: 140 }],
+         identification: [{ position: 140 }] }
+  AccountingDocumentHeaderText;
+
+//  @UI: { lineItem:       [{ position: 150 }],
+//         identification: [{ position: 150 }] }
+ @UI.hidden: true
+  AccountingDocumentTypeName;
+
+  @UI: { lineItem:       [{ position: 160 }],
+         identification: [{ position: 160 }],
+         selectionField: [{ position: 40 }] }
+  GLAccount;
+
+  @UI: { lineItem:       [{ position: 170 }],
+         identification: [{ position: 170 }] }
+  GLAccountName;
+
+  @UI: { lineItem:       [{ position: 180 }],
+         identification: [{ position: 180 }],
+         selectionField: [{ position: 50 }] }
+  HouseBankAccount;
+
+//  @UI: { lineItem:       [{ position: 190 }],
+//         identification: [{ position: 190 }] }
+ @UI.hidden: true
+  IsReversed;
+
+  @UI: { lineItem:       [{ position: 200 }],
+         identification: [{ position: 200 }],
+         selectionField: [{ position: 60 }] }
+  DocumentDate;
+
+//  @UI: { lineItem:       [{ position: 210 }],
+//         identification: [{ position: 210 }] }
+ @UI.hidden: true
+  OffsettingAccountType;
+
+//  @UI: { lineItem:       [{ position: 220 }],
+//         identification: [{ position: 220 }] }
+ @UI.hidden: true
+  OperatingConcern;
+
+//  @UI: { lineItem:       [{ position: 230 }],
+//         identification: [{ position: 230 }] }
+ @UI.hidden: true
+  ReversalReferenceDocument;
+
+//  @UI: { lineItem:       [{ position: 240 }],
+//         identification: [{ position: 240 }] }
+ @UI.hidden: true
+  SpecialGLCode;
+
+  @EndUserText.label: 'UTRNUMBER'
+  @UI: { lineItem:       [{ position: 250 }],
+       identification: [{ position: 250 }],
+       selectionField: [{ position: 70 }] }
+  utr_id;
+  
+        @EndUserText.label: 'IFSC Code'
+    @UI: { lineItem:       [{ position: 210 }],
+       identification: [{ position: 210 }] }
+  BankInternalID;
+  
+       @EndUserText.label: 'Bank Name'
+    @UI: { lineItem:       [{ position: 220 }],
+       identification: [{ position: 220 }] }
+  BankName;
+  
+         @EndUserText.label: 'SWIFTCODE' 
+    @UI: { lineItem:       [{ position: 230 }],
+       identification: [{ position: 230 }] }
+  SWIFTCode;
+  
+   @EndUserText.label: 'Bank Account Number'
+     @UI: { lineItem:       [{ position: 240 }],
+       identification: [{ position: 240 }] }
+  Bank;
+  
+    @EndUserText.label: 'Vendor IFSC Code'
+      @UI: { lineItem:       [{ position: 250 }],
+       identification: [{ position: 250 }] }
+  vend_ifsc;
+  
+     @EndUserText.label: 'Vendor Bank Accoount'
+        @UI: { lineItem:       [{ position: 260 }],
+       identification: [{ position: 260 }] }
+      vend_bank;
+      
+              @UI: { lineItem:       [{ position: 270 }],
+       identification: [{ position: 270 }] }
+      Supplier;
+      
+        @UI: { lineItem:       [{ position: 280 }],
+       identification: [{ position: 280 }] }
+      SupplierName;
+      
+       @EndUserText.label: 'Aggrid'
+         @UI: { lineItem:       [{ position: 290 }],
+       identification: [{ position: 290 }] }
+      Aggrid;
+      
+       @EndUserText.label: 'Aggrname'
+         @UI: { lineItem:       [{ position: 300 }],
+       identification: [{ position: 300 }] }
+      Aggrname;
+      
+       @EndUserText.label: 'Corpid'
+          @UI: { lineItem:       [{ position: 310 }],
+       identification: [{ position: 310 }] }
+      Corpid;
+      
+       @EndUserText.label: 'Userid'
+        @UI: { lineItem:       [{ position: 320 }],
+       identification: [{ position: 320 }] }
+      Userid;
+        
+      @EndUserText.label: 'Balance Amount'
+@UI: { lineItem: [{ position: 330 }], identification: [{ position: 330 }] }
+balance_amt;
+
+@EndUserText.label: 'Currency'
+@UI: { lineItem: [{ position: 340 }], identification: [{ position: 340 }] }
+currency;
+
+@EndUserText.label: 'Account Number'
+@UI: { lineItem: [{ position: 350 }], identification: [{ position: 350 }] }
+account_no;
+
+@EndUserText.label: 'Status'
+@UI: { lineItem: [{ position: 110 }], identification: [{ position: 110 }] }
+status;
+
+//@EndUserText.label: 'attachment'
+//@UI: { lineItem: [{ position: 365 }], identification: [{ position: 365 }] }
+//StmtAttachment;
+//      
+      
+}

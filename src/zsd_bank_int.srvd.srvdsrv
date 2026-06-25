@@ -1,0 +1,4 @@
+@EndUserText.label: 'SD FOR BANK INTEGRATION'
+define service ZSD_BANK_INT {
+  expose ZC_BANK_INT;
+}
