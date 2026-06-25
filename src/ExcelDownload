@@ -1,0 +1,150 @@
+sap.ui.define([
+    "sap/m/MessageToast",
+    "sap/m/MessageBox"
+], function(MessageToast, MessageBox) {
+    'use strict';
+
+    return {
+
+        onInit: function() {
+        },
+
+        Download: function(oEvent) {
+
+            var oView  = this.getView();
+            var oModel = oView.getModel();
+
+            var oTable  = null;
+            var oObject = null;
+
+            var aContent = oView.findAggregatedObjects(true, function(oCtrl) {
+                return oCtrl.isA("sap.ui.table.Table") ||
+                       oCtrl.isA("sap.m.Table") ||
+                       oCtrl.isA("sap.ui.table.AnalyticalTable");
+            });
+
+            if (aContent && aContent.length > 0) {
+                oTable = aContent[0];
+            }
+
+            if (!oTable) {
+                MessageBox.error("Table not found in view.");
+                return;
+            }
+
+            var oContext = null;
+            if (oTable.isA("sap.ui.table.Table") ||
+                oTable.isA("sap.ui.table.AnalyticalTable")) {
+
+                var aIndices = oTable.getSelectedIndices();
+                if (!aIndices || aIndices.length === 0) {
+                    MessageBox.error("Please select a row first.");
+                    return;
+                }
+                oContext = oTable.getContextByIndex(aIndices[0]);
+
+            } else if (oTable.isA("sap.m.Table")) {
+
+                var aItems = oTable.getSelectedItems();
+                if (!aItems || aItems.length === 0) {
+                    MessageBox.error("Please select a row first.");
+                    return;
+                }
+                oContext = aItems[0].getBindingContext();
+            }
+
+            if (!oContext) {
+                MessageBox.error("Could not get context from selected row.");
+                return;
+            }
+
+            oObject = oContext.getObject();
+            console.log("Selected row:", JSON.stringify(oObject));
+
+            var sCompanyCode        = oObject.CompanyCode;
+            var sAccountingDocument = oObject.AccountingDocument;
+            var sLedger             = oObject.Ledger  || "0L";
+            var sFiscalYear         = oObject.FiscalYear;
+
+            if (!sCompanyCode || !sAccountingDocument || !sFiscalYear) {
+                MessageBox.error(
+                    "Key fields missing from selected row.\n" +
+                    "CompanyCode: "        + sCompanyCode        + "\n" +
+                    "AccountingDocument: " + sAccountingDocument + "\n" +
+                    "FiscalYear: "         + sFiscalYear
+                );
+                return;
+            }
+            
+            oView.setBusy(true);
+
+            console.log("Calling DownloadStatement:", {
+                CompanyCode:        sCompanyCode,
+                AccountingDocument: sAccountingDocument,
+                Ledger:             sLedger,
+                FiscalYear:         sFiscalYear
+            });
+
+            oModel.callFunction("/DownloadStatement", {
+                method: "POST",
+                urlParameters: {
+                    CompanyCode:        sCompanyCode,
+                    AccountingDocument: sAccountingDocument,
+                    Ledger:             sLedger,
+                    FiscalYear:         sFiscalYear
+                },
+                success: function(oData, oResponse) {
+                    oView.setBusy(false);
+                    console.log("Response:", JSON.stringify(oData));
+
+                    var oResult   = oData.DownloadStatement || oData.results || oData;
+                    var sFileName = oResult.FileName  || "AccountStatement.xlsx";
+                    var sMimeType = oResult.MimeType  ||
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                    var vContent  = oResult.FileContent;
+
+                    if (!vContent) {
+                        MessageBox.error(
+                            "No file returned.\n" +
+                            "Please run 'Account Statement' first.\n" +
+                            "Response: " + JSON.stringify(oResult)
+                        );
+                        return;
+                    }
+
+                    try {
+                        var sBinary = atob(vContent);
+                        var aBytes  = new Uint8Array(sBinary.length);
+                        for (var i = 0; i < sBinary.length; i++) {
+                            aBytes[i] = sBinary.charCodeAt(i);
+                        }
+                        var oBlob = new Blob([aBytes], { type: sMimeType });
+                        var sUrl  = URL.createObjectURL(oBlob);
+                        var oLink = document.createElement("a");
+                        oLink.href     = sUrl;
+                        oLink.download = sFileName;
+                        document.body.appendChild(oLink);
+                        oLink.click();
+                        document.body.removeChild(oLink);
+                        URL.revokeObjectURL(sUrl);
+                        MessageToast.show("Download started: " + sFileName);
+                    } catch (e) {
+                        MessageBox.error("Download failed: " + e.message);
+                    }
+                },
+                error: function(oError) {
+                    oView.setBusy(false);
+                    console.error("Error:", oError);
+                    var sMsg = "";
+                    try {
+                        var oBody = JSON.parse(oError.responseText);
+                        sMsg = oBody.error.message.value;
+                    } catch (e) {
+                        sMsg = oError.message || "Unknown error.";
+                    }
+                    MessageBox.error("Download failed: " + sMsg);
+                }
+            });
+        }
+    };
+});
